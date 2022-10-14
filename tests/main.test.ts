@@ -35,6 +35,8 @@ afterEach(() => {
 });
 
 describe("main", () => {
+    const temp = path.join(__dirname, "tmp");
+
     test("found", async () => {
         const util = await import("../src/util");
 
@@ -43,7 +45,7 @@ describe("main", () => {
         });
 
         jest.spyOn(util, "findAsset").mockImplementation(async () => {
-            return "/tmp/my-app";
+            return path.join(temp, "my-app");
         });
 
         await main();
@@ -84,15 +86,15 @@ describe("main", () => {
         });
 
         jest.spyOn(util, "downloadAsset").mockImplementation(async () => {
-            return "/tmp/my-app.tar.gz";
+            return path.join(temp, "my-app.tar.gz");
         });
 
         jest.spyOn(util, "extractAsset").mockImplementation(async () => {
-            return "/tmp/my-app";
+            return path.join(temp, "my-app");
         });
 
         jest.spyOn(util, "cacheAsset").mockImplementation(async () => {
-            return "/tmp/my-app";
+            return path.join(temp, "my-app");
         });
 
         await main();

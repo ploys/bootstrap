@@ -716,10 +716,11 @@ describe("getAsset", () => {
 });
 
 describe("downloadAsset", () => {
+    const temp = path.join(__dirname, "tmp");
     const release = loadRelease(path.join(__dirname, "fixtures/release.json"));
 
     test("downloadAsset", async () => {
-        process.env["RUNNER_TEMP"] = "/tmp";
+        process.env["RUNNER_TEMP"] = temp;
 
         const tc = await import("@actions/tool-cache");
         const mock = jest
@@ -728,30 +729,36 @@ describe("downloadAsset", () => {
                 return dest || "";
             });
 
-        const path = await util.downloadAsset(
+        const assetPath = await util.downloadAsset(
             "octocat",
             "hello-world",
             release.assets[0]
         );
 
         expect(mock).toBeCalled();
-        expect(path).toBe("/tmp/my-app-1.0.0-x86_64-unknown-linux-gnu.tar.gz");
+        expect(assetPath).toBe(
+            path.join(temp, "my-app-1.0.0-x86_64-unknown-linux-gnu.tar.gz")
+        );
     });
 });
 
 describe("extractAsset", () => {
+    const temp = path.join(__dirname, "tmp");
+
     test("zip", async () => {
         const tc = await import("@actions/tool-cache");
         const mock = jest
             .spyOn(tc, "extractZip")
             .mockImplementation(async () => {
-                return "/tmp/my-app";
+                return path.join(temp, "my-app");
             });
 
-        const path = await util.extractAsset("/tmp/my-app.zip");
+        const assetPath = await util.extractAsset(
+            path.join(temp, "my-app.zip")
+        );
 
         expect(mock).toBeCalled();
-        expect(path).toBe("/tmp/my-app");
+        expect(assetPath).toBe(path.join(temp, "my-app"));
     });
 
     test("tar.gz", async () => {
@@ -759,31 +766,43 @@ describe("extractAsset", () => {
         const mock = jest
             .spyOn(tc, "extractTar")
             .mockImplementation(async () => {
-                return "/tmp/my-app";
+                return path.join(temp, "my-app");
             });
 
-        const path = await util.extractAsset("/tmp/my-app.tar.gz");
+        const assetPath = await util.extractAsset(
+            path.join(temp, "my-app.tar.gz")
+        );
 
         expect(mock).toBeCalled();
-        expect(path).toBe("/tmp/my-app");
+        expect(assetPath).toBe(path.join(temp, "my-app"));
     });
 
     test("invalid", async () => {
-        await expect(util.extractAsset("/tmp/my-app.txt")).rejects.toThrow();
+        await expect(
+            util.extractAsset(path.join(temp, "my-app.txt"))
+        ).rejects.toThrow();
     });
 });
 
 describe("cacheAsset", () => {
+    const temp = path.join(__dirname, "tmp");
+
     test("cacheAsset", async () => {
         const tc = await import("@actions/tool-cache");
         const mock = jest
             .spyOn(tc, "cacheDir")
             .mockImplementation(async (_path, tool, version) => {
-                return `/tmp/${tool}/${version}`;
+                return path.join(temp, tool, version);
             });
 
-        const path = await util.cacheAsset(
-            "/tmp/ploys-bootstrap-octocat-hello-world-my-app/1.0.0",
+        const extractPath = path.join(
+            temp,
+            "ploys-bootstrap-octocat-hello-world-my-app",
+            "1.0.0"
+        );
+
+        const assetPath = await util.cacheAsset(
+            extractPath,
             "octocat",
             "hello-world",
             "my-app",
@@ -791,28 +810,33 @@ describe("cacheAsset", () => {
         );
 
         expect(mock).toBeCalled();
-        expect(path).toBe(
-            "/tmp/ploys-bootstrap-octocat-hello-world-my-app/1.0.0"
+        expect(assetPath).toBe(
+            path.join(
+                temp,
+                "ploys-bootstrap-octocat-hello-world-my-app",
+                "1.0.0"
+            )
         );
     });
 });
 
 describe("findAsset", () => {
     const release = loadRelease(path.join(__dirname, "fixtures/release.json"));
+    const temp = path.join(__dirname, "tmp");
 
     test("latest", async () => {
         const tc = await import("@actions/tool-cache");
         const mock = jest
             .spyOn(tc, "find")
             .mockImplementation((name, version) => {
-                return `/tmp/${name}/${version}`;
+                return path.join(temp, name, version);
             });
 
         nock("https://api.github.com")
             .get("/repos/octocat/hello-world/releases/latest")
             .reply(200, release);
 
-        const path = await util.findAsset(
+        const assetPath = await util.findAsset(
             util.getOctokit(),
             "octocat",
             "hello-world",
@@ -821,8 +845,12 @@ describe("findAsset", () => {
         );
 
         expect(mock).toBeCalled();
-        expect(path).toBe(
-            "/tmp/ploys-bootstrap-octocat-hello-world-my-app/1.0.0"
+        expect(assetPath).toBe(
+            path.join(
+                temp,
+                "ploys-bootstrap-octocat-hello-world-my-app",
+                "1.0.0"
+            )
         );
     });
 
@@ -831,10 +859,10 @@ describe("findAsset", () => {
         const mock = jest
             .spyOn(tc, "find")
             .mockImplementation((name, version) => {
-                return `/tmp/${name}/${version}`;
+                return path.join(temp, name, version);
             });
 
-        const path = await util.findAsset(
+        const assetPath = await util.findAsset(
             util.getOctokit(),
             "octocat",
             "hello-world",
@@ -843,13 +871,19 @@ describe("findAsset", () => {
         );
 
         expect(mock).toBeCalled();
-        expect(path).toBe(
-            "/tmp/ploys-bootstrap-octocat-hello-world-my-app/1.0.0"
+        expect(assetPath).toBe(
+            path.join(
+                temp,
+                "ploys-bootstrap-octocat-hello-world-my-app",
+                "1.0.0"
+            )
         );
     });
 });
 
 describe("execCommand", () => {
+    const temp = path.join(__dirname, "tmp");
+
     test("linux", async () => {
         process.env["RUNNER_OS"] = "linux";
 
@@ -865,10 +899,10 @@ describe("execCommand", () => {
                 return 0;
             });
 
-        await util.execCommand("my_app --key val", "/tmp");
+        await util.execCommand("my_app --key val", temp);
 
         expect(mock).toBeCalled();
-        expect(bin).toBe("/tmp/my_app");
+        expect(bin).toBe(path.join(temp, "my_app"));
         expect(args).toEqual(["--key", "val"]);
     });
 
@@ -887,10 +921,10 @@ describe("execCommand", () => {
                 return 0;
             });
 
-        await util.execCommand("my_app --key val", "/tmp");
+        await util.execCommand("my_app --key val", temp);
 
         expect(mock).toBeCalled();
-        expect(bin).toBe("/tmp/my_app");
+        expect(bin).toBe(path.join(temp, "my_app"));
         expect(args).toEqual(["--key", "val"]);
     });
 
@@ -909,10 +943,10 @@ describe("execCommand", () => {
                 return 0;
             });
 
-        await util.execCommand("my_app --key val", "/tmp");
+        await util.execCommand("my_app --key val", temp);
 
         expect(mock).toBeCalled();
-        expect(bin).toBe("/tmp/my_app.exe");
+        expect(bin).toBe(path.join(temp, "my_app.exe"));
         expect(args).toEqual(["--key", "val"]);
     });
 
@@ -926,9 +960,9 @@ describe("execCommand", () => {
 
         expect(mock).not.toBeCalled();
 
-        await expect(util.execCommand("", "/tmp")).rejects.toThrow();
+        await expect(util.execCommand("", temp)).rejects.toThrow();
         await expect(
-            util.execCommand("my_app --key val", "/tmp")
+            util.execCommand("my_app --key val", temp)
         ).rejects.toThrow();
     });
 });

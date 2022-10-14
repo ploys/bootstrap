@@ -11,7 +11,7 @@ import {
 } from "@actions/tool-cache";
 import type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 import fs from "fs";
-import { basename } from "path";
+import { basename, join } from "path";
 
 const LINUX_TARGETS = [
     "-unknown-linux-gnu",
@@ -281,7 +281,7 @@ export async function downloadAsset(
     const url = `https://api.github.com/repos/${owner}/${repo}/releases/assets/${asset.id}`;
     const auth =
         process.env["GITHUB_TOKEN"] && `Bearer ${process.env["GITHUB_TOKEN"]}`;
-    const dest = `${process.env["RUNNER_TEMP"]}/${asset.name}`;
+    const dest = join(process.env["RUNNER_TEMP"] || "", asset.name);
     const path = await downloadTool(url, dest, auth, {
         Accept: "application/octet-stream"
     });
@@ -295,14 +295,14 @@ export async function downloadAsset(
 export async function extractAsset(path: string): Promise<string> {
     if (path.endsWith(".tar.gz")) {
         const dir = await extractTar(path, path.substring(0, path.length - 7));
-        const inner = `${dir}/${basename(dir)}`;
+        const inner = join(dir, basename(dir));
 
         return fs.existsSync(inner) ? inner : dir;
     }
 
     if (path.endsWith(".zip")) {
         const dir = await extractZip(path, path.substring(0, path.length - 7));
-        const inner = `${dir}/${basename(dir)}`;
+        const inner = join(dir, basename(dir));
 
         return fs.existsSync(inner) ? inner : dir;
     }
@@ -360,12 +360,12 @@ export async function execCommand(cmd: string, path: string) {
     switch ((process.env["RUNNER_OS"] || "").toLowerCase()) {
         case "linux":
         case "macos": {
-            await exec(`${path}/${bin}`, args);
+            await exec(join(path, bin), args);
 
             return;
         }
         case "windows": {
-            await exec(`${path}/${bin}.exe`, args);
+            await exec(join(path, `${bin}.exe`), args);
 
             return;
         }

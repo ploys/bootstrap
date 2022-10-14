@@ -13643,7 +13643,7 @@ function downloadAsset(owner, repo, asset) {
     return __awaiter(this, void 0, void 0, function* () {
         const url = `https://api.github.com/repos/${owner}/${repo}/releases/assets/${asset.id}`;
         const auth = process.env["GITHUB_TOKEN"] && `Bearer ${process.env["GITHUB_TOKEN"]}`;
-        const dest = `${process.env["RUNNER_TEMP"]}/${asset.name}`;
+        const dest = (0, path_1.join)(process.env["RUNNER_TEMP"] || "", asset.name);
         const path = yield (0, tool_cache_1.downloadTool)(url, dest, auth, {
             Accept: "application/octet-stream"
         });
@@ -13658,12 +13658,12 @@ function extractAsset(path) {
     return __awaiter(this, void 0, void 0, function* () {
         if (path.endsWith(".tar.gz")) {
             const dir = yield (0, tool_cache_1.extractTar)(path, path.substring(0, path.length - 7));
-            const inner = `${dir}/${(0, path_1.basename)(dir)}`;
+            const inner = (0, path_1.join)(dir, (0, path_1.basename)(dir));
             return fs_1.default.existsSync(inner) ? inner : dir;
         }
         if (path.endsWith(".zip")) {
             const dir = yield (0, tool_cache_1.extractZip)(path, path.substring(0, path.length - 7));
-            const inner = `${dir}/${(0, path_1.basename)(dir)}`;
+            const inner = (0, path_1.join)(dir, (0, path_1.basename)(dir));
             return fs_1.default.existsSync(inner) ? inner : dir;
         }
         throw new Error(`Unsupported file extension: ${path}`);
@@ -13707,11 +13707,11 @@ function execCommand(cmd, path) {
         switch ((process.env["RUNNER_OS"] || "").toLowerCase()) {
             case "linux":
             case "macos": {
-                yield (0, exec_1.exec)(`${path}/${bin}`, args);
+                yield (0, exec_1.exec)((0, path_1.join)(path, bin), args);
                 return;
             }
             case "windows": {
-                yield (0, exec_1.exec)(`${path}/${bin}.exe`, args);
+                yield (0, exec_1.exec)((0, path_1.join)(path, `${bin}.exe`), args);
                 return;
             }
             default: {

@@ -13314,7 +13314,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 399:
+/***/ 7051:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -13355,50 +13355,21 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const util = __importStar(__nccwpck_require__(2629));
 /**
- * The entrypoint to the `main` step.
+ * The entrypoint to the `post` step.
  */
-function main() {
+function post() {
     return __awaiter(this, void 0, void 0, function* () {
-        const [owner, repo] = util.getRepo();
-        const tags = util.getTags();
-        const name = core.getInput("name", { required: true });
-        const cmd = core.getInput("main", { required: true });
-        const api = util.getOctokit();
-        for (const tag of tags) {
-            const path = yield util.findAsset(api, owner, repo, name, tag);
-            if (path) {
-                yield util.execCommand(cmd, path);
-                core.saveState("bootstrap_asset_path", path);
-                return;
-            }
-        }
-        for (const [idx, tag] of tags.entries()) {
-            try {
-                const release = yield util.getRelease(api, owner, repo, tag);
-                const asset = yield util.getAsset(release, name);
-                const downloadPath = yield util.downloadAsset(owner, repo, asset);
-                const extractPath = yield util.extractAsset(downloadPath);
-                const cachePath = yield util.cacheAsset(extractPath, owner, repo, name, release.tag_name);
-                yield util.execCommand(cmd, cachePath);
-                core.saveState("bootstrap_asset_path", cachePath);
-                return;
-            }
-            catch (err) {
-                if (idx == tags.length - 1) {
-                    throw err;
-                }
-                else {
-                    core.warning(err);
-                    continue;
-                }
-            }
+        const cmd = core.getInput("post");
+        if (cmd) {
+            const path = core.getState("bootstrap_asset_path");
+            yield util.execCommand(cmd, path);
         }
     });
 }
-exports["default"] = main;
+exports["default"] = post;
 /* istanbul ignore next */
 if (require.main === require.cache[eval('__filename')]) {
-    main().catch(err => { var _a; return core.setFailed(`${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`); });
+    post().catch(err => { var _a; return core.setFailed(`${(_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : err}`); });
 }
 
 
@@ -13929,7 +13900,7 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(399);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(7051);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()

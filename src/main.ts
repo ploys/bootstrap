@@ -18,6 +18,8 @@ export default async function main(): Promise<void> {
         if (path) {
             await util.execCommand(cmd, path);
 
+            core.saveState("bootstrap_asset_path", path);
+
             return;
         }
     }
@@ -37,6 +39,8 @@ export default async function main(): Promise<void> {
             );
 
             await util.execCommand(cmd, cachePath);
+
+            core.saveState("bootstrap_asset_path", cachePath);
 
             return;
         } catch (err) {

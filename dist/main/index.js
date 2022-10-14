@@ -13662,7 +13662,7 @@ function extractAsset(path) {
             return fs_1.default.existsSync(inner) ? inner : dir;
         }
         if (path.endsWith(".zip")) {
-            const dir = yield (0, tool_cache_1.extractZip)(path, path.substring(0, path.length - 7));
+            const dir = yield (0, tool_cache_1.extractZip)(path, path.substring(0, path.length - 4));
             const inner = (0, path_1.join)(dir, (0, path_1.basename)(dir));
             return fs_1.default.existsSync(inner) ? inner : dir;
         }

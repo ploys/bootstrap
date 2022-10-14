@@ -301,7 +301,7 @@ export async function extractAsset(path: string): Promise<string> {
     }
 
     if (path.endsWith(".zip")) {
-        const dir = await extractZip(path, path.substring(0, path.length - 7));
+        const dir = await extractZip(path, path.substring(0, path.length - 4));
         const inner = join(dir, basename(dir));
 
         return fs.existsSync(inner) ? inner : dir;

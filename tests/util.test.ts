@@ -749,8 +749,8 @@ describe("extractAsset", () => {
         const tc = await import("@actions/tool-cache");
         const mock = jest
             .spyOn(tc, "extractZip")
-            .mockImplementation(async () => {
-                return path.join(temp, "my-app");
+            .mockImplementation(async (_path, dest) => {
+                return dest || "";
             });
 
         const assetPath = await util.extractAsset(
@@ -765,8 +765,8 @@ describe("extractAsset", () => {
         const tc = await import("@actions/tool-cache");
         const mock = jest
             .spyOn(tc, "extractTar")
-            .mockImplementation(async () => {
-                return path.join(temp, "my-app");
+            .mockImplementation(async (_path, dest) => {
+                return dest || "";
             });
 
         const assetPath = await util.extractAsset(

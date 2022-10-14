@@ -23,4 +23,4 @@ runs:
   using: node16
   main: dist/main/index.js
   post: dist/post/index.js
-  post-if: success() && env.INPUT_POST
+  post-if: success() && env.DISABLE_POST_STEP != 'true'

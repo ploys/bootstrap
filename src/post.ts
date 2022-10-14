@@ -6,10 +6,13 @@ import * as util from "./util";
  * The entrypoint to the `post` step.
  */
 export default async function post(): Promise<void> {
-    const cmd = core.getInput("post", { required: true });
-    const path = core.getState("bootstrap_asset_path");
+    const cmd = core.getInput("post");
 
-    await util.execCommand(cmd, path);
+    if (cmd) {
+        const path = core.getState("bootstrap_asset_path");
+
+        await util.execCommand(cmd, path);
+    }
 }
 
 /* istanbul ignore next */

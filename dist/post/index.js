@@ -13359,9 +13359,11 @@ const util = __importStar(__nccwpck_require__(2629));
  */
 function post() {
     return __awaiter(this, void 0, void 0, function* () {
-        const cmd = core.getInput("post", { required: true });
-        const path = core.getState("bootstrap_asset_path");
-        yield util.execCommand(cmd, path);
+        const cmd = core.getInput("post");
+        if (cmd) {
+            const path = core.getState("bootstrap_asset_path");
+            yield util.execCommand(cmd, path);
+        }
     });
 }
 exports["default"] = post;

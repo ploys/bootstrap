@@ -59,6 +59,9 @@ runs:
   documentation and are re-exported through the `bootstrap` action.
 * It is recommended that the action is passed a `GITHUB_TOKEN` environment
   variable to deal with API request limits.
+* Due to the limitations of GitHub Actions, this action always creates a `post`
+  step even if no `post` input is provided. This can be skipped by passing the
+  environment variable `DISABLE_POST_STEP` with value `true`.
 
 ## License
 

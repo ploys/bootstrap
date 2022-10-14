@@ -1,0 +1,7 @@
+name: Bootstrap
+description: A GitHub Action to bootstrap other actions using release assets.
+author: Daniel Balcomb <daniel.balcomb@gmail.com>
+
+runs:
+  using: node16
+  main: dist/main/index.js

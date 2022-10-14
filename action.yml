@@ -2,6 +2,20 @@ name: Bootstrap
 description: A GitHub Action to bootstrap other actions using release assets.
 author: Daniel Balcomb <daniel.balcomb@gmail.com>
 
+inputs:
+  repo:
+    description: The repository owner/repo identifier pair.
+    required: false
+  tags:
+    description: A comma-separated list of release tags to query.
+    required: false
+  name:
+    description: The release asset name to match against.
+    required: true
+  main:
+    description: The command to run in the main step.
+    required: true
+
 runs:
   using: node16
   main: dist/main/index.js

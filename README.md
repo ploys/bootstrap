@@ -55,6 +55,8 @@ runs:
   action using environment variables.
 * Outputs must be set within the executed command according to the official
   documentation and are re-exported through the `bootstrap` action.
+* It is recommended that the action is passed a `GITHUB_TOKEN` environment
+  variable to deal with API request limits.
 
 ## License
 

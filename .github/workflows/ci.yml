@@ -56,6 +56,11 @@ jobs:
 
     - name: Run
       uses: ./
+      with:
+        repo: BurntSushi/ripgrep
+        tags: 13.0.0, 12.1.1
+        name: ripgrep
+        main: rg --version
 
     - name: Upload Coverage
       if: matrix.coverage

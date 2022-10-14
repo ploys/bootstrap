@@ -61,6 +61,7 @@ jobs:
         tags: 13.0.0, 12.1.1
         name: ripgrep
         main: rg --version
+        post: rg --version
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

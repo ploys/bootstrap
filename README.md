@@ -16,6 +16,7 @@ A GitHub Action to bootstrap other actions using release assets.
 | `tags` | `false`  | `latest`           | A comma-separated list of release tags to query. |
 | `name` | `true`   |                    | The release asset name to match against.         |
 | `main` | `true`   |                    | The command to run in the main step.             |
+| `post` | `false`  |                    | The command to run in the post step.             |
 
 ### Example
 
@@ -46,13 +47,14 @@ runs:
       repo: my-org/my-repo
       tags: 1, 1.0, 1.0.0, latest
       name: my-asset
-      main: my-bin --my-input "${{ inputs.my_input }}"
+      main: my-bin main --my-input "${{ inputs.my_input }}"
+      post: my-bin post --my-input "${{ inputs.my_input }}"
 ```
 
 ### Notes
 
-* Inputs must be explicitly passed to the `main` command or to the `bootstrap`
-  action using environment variables.
+* Inputs must be explicitly passed to the `main` and `post` commands or passed
+  to the `bootstrap` action using environment variables.
 * Outputs must be set within the executed command according to the official
   documentation and are re-exported through the `bootstrap` action.
 * It is recommended that the action is passed a `GITHUB_TOKEN` environment

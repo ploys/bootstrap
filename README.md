@@ -1,5 +1,6 @@
 # Bootstrap Action
 
+[![Release Status][release-badge]][release-badge-url]
 [![Build Status][build-badge]][build-badge-url]
 [![Coverage Status][coverage-badge]][coverage-badge-url]
 [![License][license-badge]][license-badge-url]
@@ -76,6 +77,8 @@ Unless explicitly stated otherwise any contribution intentionally submitted for
 inclusion in the work shall be dual licensed as above without additional terms
 or conditions.
 
+[release-badge]: https://img.shields.io/github/v/release/ploys/bootstrap?display_name=tag&sort=semver
+[release-badge-url]: https://github.com/ploys/bootstrap/releases/latest
 [build-badge]: https://img.shields.io/github/workflow/status/ploys/bootstrap/CI/main
 [build-badge-url]: https://github.com/ploys/bootstrap/actions?query=workflow%3ACI
 [coverage-badge]: https://img.shields.io/codecov/c/github/ploys/bootstrap/main
